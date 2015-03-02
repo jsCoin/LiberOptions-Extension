@@ -3,6 +3,9 @@
   "name": "LiberOptions Enhanced",
   "version": "0.1.1",
   "description": "Add automatic bet sizing and keyboard controls to LiberOptions.",
+  "icons" : {
+    "128" : "img/logo.png"
+  },
   "permissions": [
     "*://*.liberoptions.com/*"
   ],
