@@ -49,7 +49,6 @@ function createSettings(){
   });
   div2.appendChild(input);
   div.appendChild(div2);
-  
   $('fieldset').append(div);
 
 }
@@ -115,6 +114,8 @@ function getPct($from){
 }
 
 function putClick(){
+    console.log('put clicked');
+    console.log(this);
     var $put = getPut();
     var pct = getPct($put);
     minimizeBet(pct);
@@ -140,42 +141,60 @@ function month(monthStr){
 /**
  *  Create markup and attach listeners.
  **/
-$(document).ready(function(){
-//$('.durandal-wrapper[data-view="views/trading/index"]').load(function(){
-  console.log("loaded");
-  createSettings();
-  getPut().click(putClick);
-  //mutation observer for .panel-info table
+function initTableObserver(){
   ext.observer = new MutationObserver(function(mutations){
-    var date, time;
-    var expires, now;
-    var count;
-    mutations.forEach(function(mutation){
-      if(mutation.target.nodeName == "DIV" && mutation.target.className == 'small'){
-        date = mutation.target.innerText;
-        date = date.split("-");
-        time = mutation.target.previousElementSibling.innerText;
-        time = time.split(":");
-        expires = new Date();
-        expires.setUTCMilliseconds(0);
-        now = new Date($('#miniStatus3 span').html());
-        now.setFullYear('20'+date[2]);
-        expires.setUTCDate(date[0]);
-        expires.setUTCMonth(month(date[1]));
-        expires.setUTCFullYear('20'+date[2]);
-        expires.setUTCHours(time[0]);
-        expires.setUTCMinutes(time[1]);
-        expires.setUTCSeconds(time[2]);
-        count = (expires.getTime() - now.getTime())/1000;
-        $(mutation.target).parents('tr')
-          .append("<td><span>"+count+"</span></td>");
-      }else if(mutation.addedNodes[0] && mutation.addedNodes[0].nodeName == "THEAD")
-        $(mutation.target).find('thead tr').append('<th>Remains</th>');
+  var date, time;
+  var expires, now;
+  var count;
+  mutations.forEach(function(mutation){
+    if(mutation.target.nodeName == "DIV" && mutation.target.className == 'small'){
+      date = mutation.target.innerText;
+      date = date.split("-");
+      time = mutation.target.previousElementSibling.innerText;
+      time = time.split(":");
+      expires = new Date();
+      expires.setUTCMilliseconds(0);
+      now = new Date($('#miniStatus3 span').html());
+      now.setFullYear('20'+date[2]);
+      expires.setUTCDate(date[0]);
+      expires.setUTCMonth(month(date[1]));
+      expires.setUTCFullYear('20'+date[2]);
+      expires.setUTCHours(time[0]);
+      expires.setUTCMinutes(time[1]);
+      expires.setUTCSeconds(time[2]);
+      count = (expires.getTime() - now.getTime())/1000;
+      $(mutation.target).parents('tr')
+        .append("<td><span>"+count+"</span></td>");
+    }else if(mutation.addedNodes[0] && mutation.addedNodes[0].nodeName == "THEAD")
+      $(mutation.target).find('thead tr').append('<th>Remains</th>');
     });
   });
   ext.observer.observe($('.panel-info table').get(0),{
     childList: true,
     subtree: true
   });
-//});
+}
+ext.init = false;
+ext.bodyObserver = new MutationObserver(function(mutations){
+  mutations.forEach(function(mutation){      
+    if(mutation.addedNodes[0] 
+      && mutation.addedNodes[0].nodeName == "DIV"){
+      if(mutation.addedNodes[0].id == 'pricesViewInverse'){
+        createSettings();
+        if(ext.init)
+          ext.bodyObserver.disconnect();
+        ext.init = true;
+      }
+      if(mutation.addedNodes[0].attributes[0].value=='views/trading/simplePortfolio'){
+        initTableObserver();
+        if(ext.init)
+          ext.bodyObserver.disconnect();
+        ext.init = true;
+      }
+    }     
+   });
+});
+ext.bodyObserver.observe(document.body,{
+  childList: true,
+  subtree: true
 });
