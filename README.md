@@ -15,3 +15,4 @@ After loading the extension LiberOptions will have 2 new options on the trading 
 |down arrow|open call trade window|
 |enter|execute trade|
 |esc|exit trade window|
+|1-9|sell option in portfolio|
