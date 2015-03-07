@@ -70,28 +70,38 @@ function minimizeBet(payoutPct){
  *  Page key controls.
  **/
 $(document).keydown(function(e){
-  if(e.keyCode==40){
-    //down
-    // open put trade window
-    var $put = getPut();
-    var pct = getPct($put);
-    minimizeBet(pct);
-    $put.click();
-  }else if(e.keyCode==38){
-    //up
-    // open call trade window
-    var $call = getCall();
-    var pct = getPct($call);  
-    minimizeBet(pct);
-    $call.click();
-  }else if(e.keyCode==27){
-    //escape
-    // close trade window
-    $('.panel-danger,.panel-success').find('.panel-heading button').click();
-  }else if(e.keyCode==13){
-    //enter
-    // execute trade
-    $('.panel-danger,.panel-success').find('.col-xs-7 button').click();
+  if(e.keyCode<48){
+    if(e.keyCode===40){
+      //down
+      // open put trade window
+      var $put = getPut();
+      var pct = getPct($put);
+      minimizeBet(pct);
+      $put.click();
+    }else if(e.keyCode===38){
+      //up
+      // open call trade window
+      var $call = getCall();
+      var pct = getPct($call);  
+      minimizeBet(pct);
+      $call.click();
+    }else if(e.keyCode===27){
+      //escape
+      // close trade window
+      $('.panel-danger,.panel-success').find('.panel-heading button').click();
+    }else if(e.keyCode===13){
+      //enter
+      // execute trade
+      $('.panel-danger,.panel-success').find('.col-xs-7 button').click();
+    }
+  }else if(e.keyCode>=49&&e.keyCode<=57){
+    // 1 - 9
+    // sell option in portfolio
+    $('.panel-info .table button')[e.keyCode - 49].click();
+  }else if(e.keyCode>=97&&e.keyCode<=105){
+    // numpad 1-9
+    // sell option in portfolio
+    $('.panel-info .table button')[e.keyCode - 97].click();
   }
 });
 
@@ -113,13 +123,6 @@ function getPct($from){
   return pct;
 }
 
-function putClick(){
-    console.log('put clicked');
-    console.log(this);
-    var $put = getPut();
-    var pct = getPct($put);
-    minimizeBet(pct);
-}
 ext.months = {
   Jan : 0,
   Feb : 1,
